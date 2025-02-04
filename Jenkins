@@ -1,0 +1,24 @@
+node('built-in') 
+{
+stage('continuous download') 
+{
+ git 'https://github.com/PraveenPatil7/maven.git'   
+}
+stage('continuous build') 
+{
+ sh 'mvn package'   
+}
+stage('continuous deployment') 
+{
+ deploy adapters: [tomcat9(credentialsId: '541dba82-80f8-43b4-8b39-dbe44238e33b', path: '', url: 'http://172.31.7.68:8080')], contextPath: 'abc', war: '**/*.war'    
+}
+stage('continuous testing') 
+{
+ git 'https://github.com/PraveenPatil7/functional-testing.git'
+ sh 'java -jar /home/ubuntu/.jenkins/workspace/script/testing.jar'
+}
+stage('continuous delivery') 
+{
+ deploy adapters: [tomcat9(credentialsId: '2aeaa1ad-cd02-4b42-9c19-58dc6b413797', path: '', url: 'http://172.31.9.233:8080')], contextPath: 'xyz', war: '**/*.war'    
+}
+}
